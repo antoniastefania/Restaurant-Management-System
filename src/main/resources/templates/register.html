@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/static/images/login-background.png');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .register-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            text-align: left;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: #ff0000;
+            text-align: left;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <h2>Register</h2>
+    <form th:object="${user}" th:action="@{/register}" method="post" onsubmit="return validateForm()">
+        <label>Email:</label>
+        <input type="text" th:field="*{email}" required />
+        <span id="emailError" class="error"></span>
+
+        <label>Password:</label>
+        <input type="password" th:field="*{password}" required />
+        <span id="passwordError" class="error"></span>
+
+        <label>Full Name:</label>
+        <input type="text" th:field="*{fullName}" required />
+
+        <input type="submit" value="Register"/>
+    </form>
+</div>
+
+<script>
+    function validateForm() {
+        var email = document.getElementById("email").value;
+        var password = document.getElementById("password").value;
+        var emailError = document.getElementById("emailError");
+        var passwordError = document.getElementById("passwordError");
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        var passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+
+        emailError.textContent = "";
+        passwordError.textContent = "";
+
+        if (!emailRegex.test(email)) {
+            emailError.textContent = "Invalid email format. Please enter a valid email address.";
+            return false;
+        }
+
+        if (!passwordRegex.test(password)) {
+            passwordError.textContent = "Password must contain at least 8 characters, including uppercase letters, lowercase letters, and special symbols.";
+            return false;
+        }
+
+        return true;
+    }
+</script>
+</body>
+</html>

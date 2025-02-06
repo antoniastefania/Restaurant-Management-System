@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Restaurant Menu</title>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        h1 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 30px;
+        }
+
+
+        form {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        form input[type="text"],
+        form select,
+        form input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+
+        form button[type="submit"] {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        form button[type="submit"]:hover {
+            background-color: #218838;
+        }
+
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .menu-item img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+
+        .menu-item-details {
+            flex: 1;
+        }
+
+        .menu-item-details h3 {
+            margin: 0 0 10px 0;
+            color: #343a40;
+        }
+
+        .menu-item-details p {
+            margin: 5px 0;
+            color: #6c757d;
+        }
+
+        .menu-item-details .price {
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .menu-item-actions {
+            text-align: right;
+        }
+
+        .menu-item-actions form button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .menu-item-actions form button:hover {
+            background-color: #0069d9;
+        }
+
+
+        .no-items {
+            text-align: center;
+            color: #6c757d;
+            font-size: 1.2em;
+            margin-top: 40px;
+        }
+
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            gap: 5px;
+        }
+
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 12px;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #e9ecef;
+        }
+
+        .pagination .current {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            cursor: default;
+        }
+
+        .pagination .disabled {
+            color: #6c757d;
+            pointer-events: none;
+            border-color: #dee2e6;
+        }
+
+
+        .home-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        .home-link:hover {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<h1>Restaurant Menu</h1>
+
+
+<form th:action="@{/menu}" method="get">
+
+    <input type="text" name="keyword" placeholder="Search by keyword..." th:value="${keyword}"/>
+
+    <select name="category">
+        <option value="">All Categories</option>
+        <option th:selected="${category == 'Appetizer'}" value="Appetizer">Appetizer</option>
+        <option th:selected="${category == 'Main Course'}" value="Main Course">Main Course</option>
+        <option th:selected="${category == 'Dessert'}" value="Dessert">Dessert</option>
+        <option th:selected="${category == 'Drink'}" value="Drink">Drink</option>
+    </select>
+
+
+    <label>Price range:</label>
+    <input type="number" name="minPrice" step="0.01" placeholder="min" th:value="${minPrice}"/>
+    <input type="number" name="maxPrice" step="0.01" placeholder="max" th:value="${maxPrice}"/>
+
+    <label>Items per page:</label>
+    <select name="size">
+        <option th:selected="${size == 5}" value="5">5</option>
+        <option th:selected="${size == 10}" value="10">10</option>
+        <option th:selected="${size == 20}" value="20">20</option>
+    </select>
+
+
+    <button type="submit">Search</button>
+</form>
+
+
+<p th:text="'Showing ' + (${menuPage.number * menuPage.size + 1}) + ' to ' +
+        (${menuPage.number * menuPage.size + menuPage.numberOfElements}) +
+        ' of ' + ${menuPage.totalElements} + ' items.'"></p>
+
+<div th:if="${menuPage.hasContent()}">
+    <div th:each="item : ${menuPage.content}" class="menu-item">
+
+        <img th:if="${item.imageUrl != null}" th:src="@{${item.imageUrl}}" th:alt="${item.name}" />
+        <img th:if="${item.imageUrl == null}" th:src="@{/images/default.png}" alt="No Image Available" />
+
+
+        <div class="menu-item-details">
+            <h3 th:text="${item.name}">Item Name</h3>
+            <p th:text="${item.description}">Description</p>
+            <p class="price" th:text="${#numbers.formatCurrency(item.price)}">$0.00</p>
+        </div>
+
+
+        <div class="menu-item-actions">
+            <form th:action="@{/cart/add}" method="post">
+                <input type="hidden" name="menuItemId" th:value="${item.id}"/>
+                <button type="submit">Add to Cart</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div th:if="${!menuPage.hasContent()}" class="no-items">
+    <p>No menu items found.</p>
+</div>
+
+<div class="pagination" th:if="${menuPage.totalPages > 1}">
+    <!-- Previous Page Link -->
+    <a th:if="${menuPage.hasPrevious()}"
+       th:href="@{/menu(page=${menuPage.number - 1}, size=${menuPage.size}, keyword=${keyword}, category=${category}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
+        Previous
+    </a>
+    <span th:if="${!menuPage.hasPrevious()}" class="disabled">Previous</span>
+
+    <!-- Page Number Links -->
+    <span th:each="i : ${#numbers.sequence(0, menuPage.totalPages - 1)}">
+            <a th:if="${i != menuPage.number}"
+               th:href="@{/menu(page=${i}, size=${menuPage.size}, keyword=${keyword}, category=${category}, minPrice=${minPrice}, maxPrice=${maxPrice})}"
+               th:text="${i + 1}">1</a>
+            <span th:if="${i == menuPage.number}" class="current" th:text="${i + 1}">1</span>
+        </span>
+
+    <!-- Next Page Link -->
+    <a th:if="${menuPage.hasNext()}"
+       th:href="@{/menu(page=${menuPage.number + 1}, size=${menuPage.size}, keyword=${keyword}, category=${category}, minPrice=${minPrice}, maxPrice=${maxPrice})}">
+        Next
+    </a>
+    <span th:if="${!menuPage.hasNext()}" class="disabled">Next</span>
+</div>
+
+
+<a class="home-link" th:href="@{/}">Go Home</a>
+</body>
+</html>

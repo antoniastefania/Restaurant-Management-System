@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Online Restaurant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        p {
+            color: #666;
+            text-align: center;
+        }
+
+        .navigation {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .navigation a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .navigation a:hover {
+            background-color: #555;
+        }
+
+        .image-container {
+            text-align: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<h1>Welcome to Our Restaurant</h1>
+<p>Enjoy delicious meals and comfortable dining experience.</p>
+
+<div class="navigation">
+    <a th:href="@{/menu}">View Menu</a>
+    <a th:href="@{/cart}">View Cart</a>
+    <a th:href="@{/orders}">My Orders</a>
+    <a th:href="@{/reservation}">Reservation</a>
+    <a th:href="@{/reservation/list}">My Reservation</a> <!-- 新增的链接 -->
+    <a th:href="@{/admin}">Admin Dashboard</a>
+    <a th:href="@{/login}">Login</a>
+    <a th:href="@{/register}">Register</a>
+    <a th:href="@{/logout}">Logout</a>
+</div>
+
+<div class="image-container">
+    <!-- Modified image path -->
+    <img th:src="@{/static/images/restaurant.png}" alt="Restaurant Image">
+</div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Menu Item</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1em;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function validatePrice() {
+            var priceInput = document.getElementById("price");
+            var price = parseFloat(priceInput.value);
+            if (isNaN(price) || price <= 0) {
+                alert("Price must be a number greater than 0.");
+                return false;
+            }
+            return true;
+        }
+
+        function previewImage() {
+            var imageUrl = document.getElementById("imageUrl").value;
+            var previewImg = document.getElementById("imagePreview");
+            if (imageUrl) {
+                previewImg.src = imageUrl;
+                previewImg.style.display = "block";
+            } else {
+                previewImg.style.display = "none";
+            }
+        }
+    </script>
+</head>
+<body>
+<h1>Edit Menu Item</h1>
+
+<form th:object="${menuItem}" th:action="@{/admin/menu/update}" method="post" onsubmit="return validatePrice();">
+    <!-- Hidden ID field -->
+    <input type="hidden" th:field="*{id}" />
+
+    <label for="name">Name:</label>
+    <input type="text" id="name" th:field="*{name}" required />
+
+    <label for="description">Description:</label>
+    <input type="text" id="description" th:field="*{description}" required />
+
+    <label for="price">Price:</label>
+    <input type="number" id="price" step="0.01" th:field="*{price}" min="0.01" required />
+
+    <label for="category">Category:</label>
+    <input type="text" id="category" th:field="*{category}" required />
+
+    <label for="ingredients">Ingredients:</label>
+    <input type="text" id="ingredients" th:field="*{ingredients}" required />
+
+    <label for="imageUrl">Image URL:</label>
+    <input type="text" id="imageUrl" th:field="*{imageUrl}" onchange="previewImage()" />
+
+    <!-- Image Preview -->
+    <img th:if="${menuItem.imageUrl}" th:src="${menuItem.imageUrl}"
+         id="imagePreview" class="preview-image" alt="Menu item preview" />
+
+    <input type="submit" value="Update Item"/>
+</form>
+
+<a class="back-link" th:href="@{/admin/menu}">Back to Menu Management</a>
+</body>
+</html>
